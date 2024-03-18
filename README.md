@@ -7,6 +7,7 @@ System requirements: Python 3, and Pari 2.1 or higher (note that the Python rout
 The two files rsaplus.gp and rsaplus.py contain the same functions, written once in PARI and once in Python. 
 
 The following routines are provided: 
+
 **1. Auxiliary functions:**
 - `sqrt_threemodfour`: auxiliary function, computes the square root of input y mod p if p is congruent to 3 mod 4
 - `sqrt_fivemodeight`: auxiliary function, computes the square root of input y mod p if p is congruent to 5 mod 8
