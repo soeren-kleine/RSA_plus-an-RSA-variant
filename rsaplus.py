@@ -9,7 +9,55 @@ pari.allocatemem()
 pari.allocatemem()
 pari.allocatemem()
 
-# (I) RSA+ functions:
+
+
+# 1. Auxiliary functions: 
+
+def sqrt_threemodfour(y, p):
+return pow(y, (p + 1) // 4, p)
+
+
+def sqrt_fivemodeight(y, p):
+ret = pow(y, (p + 3) // 8, p)
+if pow(y, (p - 1) // 4, p) != 1:
+ret *= pow(2, (p - 1) // 4, p)
+return ret
+
+
+def find_smallrandomprime(phi,phi2):
+z = pari.randomprime(6)
+while phi%z == 0 or phi2%z == 0:
+z = pari.nextprime(z+pari.random(10))
+return z
+
+
+---------------------------------------------------------------------------------------------------------
+
+# 2. Key generation: 
+def generate_rsa(bits):
+bound = 2 ** bits
+e = 65537
+temp = 1
+while temp % 8 ==1 or temp-1 % e == 0:
+temp = pari.randomprime([bound, bound*2])
+p = temp
+
+bound *= 4
+temp = 1
+while temp % 8 ==1 or temp-1 % e == 0:
+temp = pari.randomprime([bound, bound*2])
+q = temp
+
+d = int(pow(e, -1, (p-1)*(q-1)))
+
+return e, d, p, q
+
+
+
+---------------------------------------------------------------------------------------------------------
+
+# 3. Encryption and decryption: 
+
 def rsap_encrypt(m, n, bits, powerprime):
     baseprime = pari.randomprime([2**150, 2**190])
     expo = pari.random([pari.truncate(log(2)*(bits-148)/log(powerprime))+1, pari.truncate(log(2)*(3/2*bits-188)/log(powerprime))])
@@ -57,32 +105,18 @@ def rsap_decrypt(p, q, c, y):
         m22 = pow(c,x2 % (q-1),q)
         m2 = pari.lift(pari.chinese(pari.Mod(m21,p), pari.Mod(m22,q)))
     else:
-        m2 = 1
+        m2 = 0
 
 
     return m1, m2
 
 
-def sqrt_threemodfour(y, p):
-    return pow(y, (p + 1) // 4, p)
-
-
-def sqrt_fivemodeight(y, p):
-    ret = pow(y, (p + 3) // 8, p)
-    if pow(y, (p - 1) // 4, p) != 1:
-        ret *= pow(2, (p - 1) // 4, p)
-    return ret
-
-
-
-
-
-#(II) RSA functions including key generation
 
 def rsa_encrypt(m,e,n):
     c = pow(m,e,n)
 
     return c
+
 
 def rsa_decrypt(c,d,p,q):
     m1 = pow(c,d,p)
@@ -92,31 +126,9 @@ def rsa_decrypt(c,d,p,q):
     return m
 
 
-
-def generate_rsa(bits):
-    bound = 2 ** bits
-    e = 65537
-    temp = 1
-    while temp % 8 ==1 or temp-1 % e == 0:
-        temp = pari.randomprime([bound, bound*2])
-    p = temp
-
-    bound *= 4
-    temp = 1
-    while temp % 8 ==1 or temp-1 % e == 0:
-        temp = pari.randomprime([bound, bound*2])
-    q = temp
-
-    d = int(pow(e, -1, (p-1)*(q-1)))
-
-    return e, d, p, q
-
-
-
-#(III) Rabin functions
-
 def rabin_encrypt(m,n):
     return pow(m,2,n)
+
 
 def rabin_decrypt(c,p,q):
     n = p*q
@@ -137,16 +149,9 @@ def rabin_decrypt(c,p,q):
 
 
 
+---------------------------------------------------------------------------------------------------------
 
-# Additional key generation function for RSA+, and main test function
-
-
-def find_smallrandomprime(phi,phi2):
-    z = pari.randomprime(6)
-    while phi%z == 0 or phi2%z == 0:
-        z = pari.nextprime(z+pari.random(10))
-    return z
-
+# 4. Runtime test: 
 
 def runtime_test(bits, inst, i):
     l = []
