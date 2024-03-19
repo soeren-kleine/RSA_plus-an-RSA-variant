@@ -46,7 +46,6 @@ baseprime = randomprime([2^150, 2^190]);
 
 expo = random([truncate(log(2)*(bits - 148)/log(powerprime))+1, truncate(log(2)*(3/2*bits-188)/log(powerprime))]);
 x = baseprime * powerprime^expo;
-if(x > n, print("ÖÖÖÖÖÖÖÖÖ"));
 c= Mod(m,n)^x; 
 y=Mod(x,n)^2; 
 [c,y]
@@ -121,7 +120,7 @@ for(j = 1,inst,
   [e, d, p, q] = generate_rsa(bits);
   listput(l, [e, d, p, q]));
 t0 = (1.0*(getabstime() - t)) / inst; 
-print("Initialisierung fertig"); 
+print("Key generation complete"); 
 
 t = getabstime(); 
 t1 = t2 = t3 = 0; 
@@ -136,7 +135,7 @@ for(j = 1, #l,
       test = rsap_decrypt(p, q, c, y); 
       if((m != test[1]) && (m != test[2]), control = -1; break))); 
 t1 = 1.0*(getabstime() - t) / (inst*i); 
-print("RSA+ fertig"); 
+print("RSA+ done"); 
 
 t = getabstime(); 
 for(j= 1, #l, 
@@ -151,7 +150,7 @@ for(j= 1, #l,
       test = rsa_decrypt(c, d, p, q); 
       if(m != test, control = -2; break))); 
 t2 = 1.0*(getabstime() - t) / (inst*i); 
-print("RSA fertig"); 
+print("RSA done"); 
 
 t = getabstime(); 
 for(j=1, # l, 
