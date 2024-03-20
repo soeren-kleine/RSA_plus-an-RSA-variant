@@ -29,3 +29,5 @@ The following routines are provided:
 
 # Licence information: 
 
+This code is shared under a **CC BY-NC-SA** licence, see 
+<https://creativecommons.org/licenses/by-nc-sa/4.0/> 
