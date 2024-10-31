@@ -8,12 +8,6 @@ sqrt_fivemodeight(y,p) = {local(ret); ret = Mod(y,p)^((p+3)/8); if(Mod(y,p)^((p-
 
 
 
-find_smallrandomprime(phi,phi2) = {local(p = randomprime(6)); 
-while((phi%p == 0) || (phi2%p == 0), p = nextprime(p+random(10))); 
-p 
-}
-
-
 ---------------------------------------------------------------------------------------------------------
 
 \\ 2. Key generation: 
@@ -40,12 +34,12 @@ d = lift(Mod(e,(p-1)*(q-1))^(-1));
 
 \\ 3. Encryption and decryption: 
 
-rsap_encrypt(m,n,bits, powerprime)={
+rsap_encrypt(m,n,bits)={
 local(expo, x,y,c); 
 baseprime = randomprime([2^150, 2^190]);
 
-expo = random([truncate(log(2)*(bits - 148)/log(powerprime))+1, truncate(log(2)*(3/2*bits-188)/log(powerprime))]);
-x = baseprime * powerprime^expo;
+expo = random([truncate((bits+1)*log(2)/log(baseprime)), truncate(log(2)*3/2*bits/log(baseprime))]);
+x = baseprime^expo;
 c= Mod(m,n)^x; 
 y=Mod(x,n)^2; 
 [c,y]
@@ -130,8 +124,7 @@ for(j = 1, #l,
    n = p*q;  
    for(s=1,i, 
       m = random(n); 
-      powerprime = find_smallrandomprime(p-1,q-1); 
-      [c, y] = rsap_encrypt(m, n, bits, powerprime);
+      [c, y] = rsap_encrypt(m, n, bits);
       test = rsap_decrypt(p, q, c, y); 
       if((m != test[1]) && (m != test[2]), control = -1; break))); 
 t1 = 1.0*(getabstime() - t) / (inst*i); 
