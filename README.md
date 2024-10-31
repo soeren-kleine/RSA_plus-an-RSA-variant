@@ -11,13 +11,12 @@ The following routines are provided:
 **1. Auxiliary functions:**
 - `sqrt_threemodfour`: auxiliary function, computes the square root of input y mod p if p is congruent to 3 mod 4
 - `sqrt_fivemodeight`: auxiliary function, computes the square root of input y mod p if p is congruent to 5 mod 8
-- `find_smallrandomprime`: an auxiliary function used in the key generation of RSA+ -- given two integers phi and phi2 (in our applications we will let phi = p-1 and phi2 = q-1), find a small random prime number which is relatively prime with phi*phi2
 
 **2. Key generation:**
 - `generate_rsa`: given an integer "bits", returns primes p and q such that p has roughly bits many bits, and q has bits+2 bits, and also returns encryption and decryption exponents (by default, e = 65537 is taken for reasons of efficiency)
 
 **3. Encryption and decryption:**
-- `rsap_encrypt`: takes as input a message m, a modulus n, a variable bits which corresponds to the bit length of the prime factors p and q of n (see function `generate_rsa above`), and a small prime called powerprime, and returns a valid RSA+ encryption [c,y], where y is the square of an exponent x which lies between n^{1/2} and n^{3/4} and is of the form l * baseprime^k for some prime l \in [2^{150}, 2^{190}]
+- `rsap_encrypt`: takes as input a message m, a modulus n, and a variable bits which corresponds to the bit length of the prime factors p and q of n (see function `generate_rsa above`), and returns a valid RSA+ encryption [c,y], where y is the square of an exponent x which lies between n^{1/2} and n^{3/4} and is of the form l * baseprime^k for some prime l \in [2^{150}, 2^{190}]
 - `rsap_decrypt`: takes as input the prime factors p and q of n, and an RSA+ ciphertext [c,y], and returns two possible plaintexts m1 and m2 (if the plaintext is unique then m1 = 1 or m2 = 1)
 - `rsa_encrypt`: given message m, public exponent [e,n], returns c = m^e mod(n)
 - `rsa_decrypt`: given p and q, a ciphertext y mod n and private exponent d, returns m = c^d mod(n)
