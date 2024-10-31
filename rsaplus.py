@@ -14,43 +14,37 @@ pari.allocatemem()
 # 1. Auxiliary functions: 
 
 def sqrt_threemodfour(y, p):
-return pow(y, (p + 1) // 4, p)
+    return pow(y, (p + 1) // 4, p)
 
 
 def sqrt_fivemodeight(y, p):
-ret = pow(y, (p + 3) // 8, p)
-if pow(y, (p - 1) // 4, p) != 1:
-ret *= pow(2, (p - 1) // 4, p)
-return ret
+    ret = pow(y, (p + 3) // 8, p)
+    if pow(y, (p - 1) // 4, p) != 1:
+        ret *= pow(2, (p - 1) // 4, p)
+    return ret
 
-
-def find_smallrandomprime(phi,phi2):
-z = pari.randomprime(6)
-while phi%z == 0 or phi2%z == 0:
-z = pari.nextprime(z+pari.random(10))
-return z
 
 
 ---------------------------------------------------------------------------------------------------------
 
 # 2. Key generation: 
 def generate_rsa(bits):
-bound = 2 ** bits
-e = 65537
-temp = 1
-while temp % 8 ==1 or temp-1 % e == 0:
-temp = pari.randomprime([bound, bound*2])
-p = temp
+    bound = 2 ** bits
+    e = 65537
+    temp = 1
+    while temp % 8 ==1 or temp-1 % e == 0:
+        temp = pari.randomprime([bound, bound*2])
+    p = temp
 
-bound *= 4
-temp = 1
-while temp % 8 ==1 or temp-1 % e == 0:
-temp = pari.randomprime([bound, bound*2])
-q = temp
+    bound *= 4
+    temp = 1
+    while temp % 8 ==1 or temp-1 % e == 0:
+        temp = pari.randomprime([bound, bound*2])
+    q = temp
 
-d = int(pow(e, -1, (p-1)*(q-1)))
+    d = int(pow(e, -1, (p-1)*(q-1)))
 
-return e, d, p, q
+    return e, d, p, q
 
 
 
@@ -58,10 +52,10 @@ return e, d, p, q
 
 # 3. Encryption and decryption: 
 
-def rsap_encrypt(m, n, bits, powerprime):
+def rsap_encrypt(m, n, bits):
     baseprime = pari.randomprime([2**150, 2**190])
-    expo = pari.random([pari.truncate(log(2)*(bits-148)/log(powerprime))+1, pari.truncate(log(2)*(3/2*bits-188)/log(powerprime))])
-    x = baseprime * (powerprime**expo)
+    expo = pari.random([pari.truncate(log(2)*(bits+1)/log(baseprime)), pari.truncate(log(2)*(3/2*bits)/log(baseprime))])
+    x = baseprime**expo
 
     c = pow(m, x, n)
     y = pow(x, 2, n)
@@ -171,8 +165,7 @@ def runtime_test(bits, inst, i):
         n = p*q
         for s in range(i):
             m = randint(0, n)
-            powerprime = find_smallrandomprime(p-1, q-1)
-            c, y = rsap_encrypt(m, n, bits, powerprime)
+            c, y = rsap_encrypt(m, n, bits)
             test = rsap_decrypt(p, q, c, y)
             if m != test[0] and m != test[1]:
                 control = -1
